@@ -21,7 +21,7 @@ class EmailPipeline(object):
         indicate that the item is to be skipped.
         """
         email = item['email']
-        if not email or email in self.emails:
+        if email in self.emails:
             raise DropItem("%s dropped from pipeline" % item)
         else:
             self.emails.add(email)

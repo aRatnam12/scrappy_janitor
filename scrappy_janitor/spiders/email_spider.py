@@ -29,10 +29,12 @@ class EmailSpider(CrawlSpider):
         ),
     )
 
-    def __init__(self, start_url, *args, **kwargs):
+    def __init__(self, start_url, max_page_crawls, *args, **kwargs):
         super(EmailSpider, self).__init__(*args, **kwargs)
         self.allowed_domains = [start_url, 'www.' + start_url] # Only use the base domain to make sure subdomains are ignored
-        self.start_urls = ['http://www.' + start_url] # start_urls needs the http
+        self.start_urls = ['http://' + start_url] # start_urls needs the http
+        self.max_page_crawls = max_page_crawls
+        self.num_pages_crawled = 0
 
     def parse_link(self, response):
         """
@@ -53,10 +55,20 @@ class EmailSpider(CrawlSpider):
         Filters all links that are extracted by the LinkExtractor.
         Returns only the links that are in allowed domains.
         """
+        if self.max_pages_crawled():
+            return []
+
         def in_allowed_domains(link):
             cleaned_url = link.url.split('//')[-1] # Remove https:// or http://
             domain = cleaned_url.split('/')[0] # Remove any routes after the domain
-            return (domain in self.allowed_domains)
+            allow_link = domain in self.allowed_domains
+            if self.max_pages_crawled() or not allow_link:
+                return False
+            self.num_pages_crawled += 1
+            return True
 
         return filter(in_allowed_domains, links)
+
+    def max_pages_crawled(self):
+        return self.num_pages_crawled == self.max_page_crawls
 
