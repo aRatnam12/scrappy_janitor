@@ -25,11 +25,11 @@ def main():
             except NameError:
                 print 'Please make sure you surround the inputted website in quotes!'
 
-    max_page_crawls = raw_input('What is the max number of webpages that will be scraped? Press \'enter\' to default to 100. ')
-    if len(max_page_crawls) and '1' <= max_page_crawls <= '100':
+    max_page_crawls = raw_input('What is the max number of webpages that will be scraped? Press \'enter\' to default to 50. ')
+    if len(max_page_crawls) and '1' <= max_page_crawls <= '500':
         max_page_crawls = int(max_page_crawls)
     else:
-        max_page_crawls = 20
+        max_page_crawls = 50
 
     # Remove the http://, https://, www. if they are there to ensure consistency
     start_url = check_url.split('//')[-1]
